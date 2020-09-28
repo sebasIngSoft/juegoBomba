@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             //finalizamos la actividad actual
             finish();
+
         }
 
         public void DetenerHilo(View view){
@@ -120,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 frmExplocion.setVisibility(View.VISIBLE);
                 frmInicial.setVisibility(View.GONE);
+                audioReloj.stop();
+                audioExplocion.start();
                 return false;
             }
         }
@@ -162,10 +165,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         public void clickHilosMultiples(){
-            audioReloj.start();
             try {
-                tarea1.cancel(true);
-                tarea2.cancel(true);
+                tarea1.onCancelled();
+                tarea2.onCancelled();
             }catch (Exception e){}
 
             /*Se definen los hilos*/
@@ -178,10 +180,12 @@ public class MainActivity extends AppCompatActivity {
                 /*executeOnExecutor(PoolDeHilos, parametros si se desean mandar)*/
                 tarea1.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,null);
                 tarea2.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,null);
+                audioReloj.start();
             } else {
                 /*Si no ejecute los hilos normalmente.*/
                 tarea1.execute();
                 tarea2.execute();
+                audioReloj.start();
             }
         }
     }
