@@ -3,6 +3,7 @@ package com.example.juegobomba;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,19 +17,23 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+        //hilos a usar
         clsAsincrono tarea1;
         clsAsincrono tarea2;
-
+        //cronometros de las bombas
         TextView progressBom1;
         TextView progressBom2;
-
+        //sonidos para las interfaz
+        private MediaPlayer audioExplocion,audioReloj,audioGanaste;
+        //botones de colores
         Button btnNegro1,btnNegro2,btnRojo1,btnRojo2,btnAzul1,btnAzul2;
-
+        //imagenes que se van a mostrar al desactivar la bomba
         ImageView imgDesactivado1, imgDesactivado2;
-
+        //frames que se van a ir rotan entre ellos dependiendo del suceso
         FrameLayout frmInicial,frmExplocion,frmGanaste,frmBtnBomba1,frmBtnBomba2;
-
+        //variables para saber que bomba se ha desactivado
         private boolean validar1,validar2;
+        //numeros aleatorios para asignarles a los colores de los botones
         int bomba1;
         int bomba2;
         
@@ -56,6 +61,10 @@ public class MainActivity extends AppCompatActivity {
             frmBtnBomba1 = (FrameLayout) findViewById(R.id.frmBtnBomba1);
             frmBtnBomba2 = (FrameLayout) findViewById(R.id.frmBtnBomba2);
 
+            audioExplocion = MediaPlayer.create(this,R.raw.explosion);
+            audioReloj = MediaPlayer.create(this,R.raw.reloj);
+            audioGanaste = MediaPlayer.create(this,R.raw.youwin);
+
             validar1=false;
             validar2=false;
 
@@ -73,14 +82,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             //finalizamos la actividad actual
             finish();
-           /* frmGanaste.setVisibility(View.GONE);
-            frmExplocion.setVisibility(View.GONE);
-            frmInicial.setVisibility(View.VISIBLE);
-            frmBtnBomba1.setVisibility(View.VISIBLE);
-            frmBtnBomba2.setVisibility(View.VISIBLE);
-            imgDesactivado1.setVisibility(View.GONE);
-            imgDesactivado2.setVisibility(View.GONE);
-            clickHilosMultiples();*/
         }
 
         public void DetenerHilo(View view){
@@ -142,12 +143,16 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 frmExplocion.setVisibility(View.VISIBLE);
                 frmInicial.setVisibility(View.GONE);
+                audioReloj.stop();
+                audioExplocion.start();
                 return false;
             }
         }
 
         public void isGanador(){
             if (validar1==true && validar2==true){
+                audioReloj.stop();
+                audioGanaste.start();
                 frmInicial.setVisibility(View.GONE);
                 frmGanaste.setVisibility(View.VISIBLE);
             }
@@ -157,15 +162,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         public void clickHilosMultiples(){
-
+            audioReloj.start();
             try {
                 tarea1.cancel(true);
                 tarea2.cancel(true);
             }catch (Exception e){}
 
             /*Se definen los hilos*/
-            tarea1 = new clsAsincrono(MainActivity.this, progressBom1,frmInicial,frmExplocion);
-            tarea2 = new clsAsincrono(MainActivity.this, progressBom2,frmInicial,frmExplocion);
+            tarea1 = new clsAsincrono(MainActivity.this, progressBom1,frmInicial,frmExplocion,audioExplocion);
+            tarea2 = new clsAsincrono(MainActivity.this, progressBom2,frmInicial,frmExplocion,audioExplocion);
 
             /*Se valida si la version es mayor a honeycomb (3.0)*/
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {

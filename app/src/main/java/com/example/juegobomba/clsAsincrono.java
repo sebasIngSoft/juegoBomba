@@ -1,6 +1,7 @@
 package com.example.juegobomba;
 
 import android.app.Activity;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -50,16 +51,18 @@ public class clsAsincrono extends AsyncTask<Void, Integer, Boolean> {
     TextView lblCrono;
     private Activity activity;
     private FrameLayout frmInicial,frmExplocion;
+    private MediaPlayer audioExplocion;
     /*Variables globales con las cuales implemento los minutos y los segundos*/
     int minutes = 0;
     int seconds = 60;
 
     /*Constructor*/
-    public clsAsincrono(Activity activity, TextView lblCrono,FrameLayout frmInicial,FrameLayout frmExplocion) {
+    public clsAsincrono(Activity activity, TextView lblCrono, FrameLayout frmInicial, FrameLayout frmExplocion, MediaPlayer audioExplocion) {
         this.activity = activity;
         this.lblCrono = lblCrono;
         this.frmInicial = frmInicial;
         this.frmExplocion = frmExplocion;
+        this.audioExplocion=audioExplocion;
     }
 
     private void detenerHilo()
@@ -137,6 +140,7 @@ public class clsAsincrono extends AsyncTask<Void, Integer, Boolean> {
         if(result){
             frmInicial.setVisibility(View.GONE);
             frmExplocion.setVisibility(View.VISIBLE);
+            audioExplocion.start();
         }
     }
 
@@ -146,7 +150,7 @@ public class clsAsincrono extends AsyncTask<Void, Integer, Boolean> {
     @Override
     protected void onCancelled() {
         /*Si se cancela el proceso se le indica al usuario*/
-        Toast.makeText(activity, "Tarea cancelada!",
+        Toast.makeText(activity, "Desactivado!",
                 Toast.LENGTH_SHORT).show();
     }
 }
